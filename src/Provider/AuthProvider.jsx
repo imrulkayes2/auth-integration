@@ -13,15 +13,19 @@ const AuthProvider = ({ children }) => {
     const signInUser = (email, password) => {
         return signInWithEmailAndPassword(auth, email, password)
     }
-    useEffect(() => {
-        onAuthStateChanged(auth, currentUser => {
-            console.log('current user data', currentUser);
-            setUser(currentUser);
-        })
-    }, [])
     const logOut = () => {
         return signOut(auth);
     }
+    useEffect(() => {
+        const unSubscribe = onAuthStateChanged(auth, currentUser => {
+            console.log('current user data', currentUser);
+            setUser(currentUser);
+        });
+        return () => {
+            unSubscribe();
+        }
+    }, [])
+
 
     const authInfo = { user, createUser, signInUser, logOut }
     return (
